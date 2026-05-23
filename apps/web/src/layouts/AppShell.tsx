@@ -1,0 +1,34 @@
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { AppProviders } from '../providers/AppProviders';
+import { Navbar } from '../components/Navbar';
+import { CartDrawer } from '../components/CartDrawer';
+import { HomePage } from '../pages/HomePage';
+import { CatalogPage } from '../pages/CatalogPage';
+import { ProductPage } from '../pages/ProductPage';
+import { CheckoutPage } from '../pages/CheckoutPage';
+import { ReceiptPage } from '../pages/ReceiptPage';
+import { NotFoundPage } from '../pages/NotFoundPage';
+
+export function AppShell() {
+  return (
+    <AppProviders>
+      <BrowserRouter>
+        <div className="min-h-screen bg-transparent">
+          <Navbar />
+          <main className="mx-auto w-full max-w-7xl px-4 pb-16 pt-4 sm:px-6 lg:px-8">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/catalog" element={<CatalogPage />} />
+              <Route path="/products/:slug" element={<ProductPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/checkout/success" element={<ReceiptPage />} />
+              <Route path="/home" element={<Navigate to="/" replace />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </main>
+          <CartDrawer />
+        </div>
+      </BrowserRouter>
+    </AppProviders>
+  );
+}

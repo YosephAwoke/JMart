@@ -1,0 +1,1 @@
+export { MOCK_PRODUCTS as mockCatalog } from '@jmart/shared';
