@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AppProviders } from '../providers/AppProviders';
 import { Navbar } from '../components/Navbar';
+import { BackdropOrbits } from '../components/BackdropOrbits';
 import { CartDrawer } from '../components/CartDrawer';
 import { HomePage } from '../pages/HomePage';
 import { CatalogPage } from '../pages/CatalogPage';
@@ -13,9 +14,10 @@ export function AppShell() {
   return (
     <AppProviders>
       <BrowserRouter>
-        <div className="min-h-screen bg-transparent">
+        <div className="relative min-h-screen bg-transparent">
+          <BackdropOrbits />
           <Navbar />
-          <main className="mx-auto w-full max-w-7xl px-4 pb-16 pt-4 sm:px-6 lg:px-8">
+          <main className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-16 pt-4 sm:px-6 lg:px-8">
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/catalog" element={<CatalogPage />} />

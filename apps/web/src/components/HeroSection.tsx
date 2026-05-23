@@ -19,7 +19,7 @@ export function HeroSection() {
   const currentSlide = slides[activeSlide] ?? slides[0];
 
   return (
-    <section className="relative overflow-hidden rounded-[2.25rem] border border-border bg-surface p-6 shadow-premium lg:grid-cols-[1.15fr_0.85fr] lg:p-8">
+    <section className="relative overflow-hidden rounded-[2.25rem] border border-border bg-surface/70 p-6 shadow-premium backdrop-blur-xl lg:grid-cols-[1.15fr_0.85fr] lg:p-8">
       <motion.div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -z-0 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.18),transparent_28%),radial-gradient(circle_at_85%_15%,rgba(99,102,241,0.16),transparent_24%),linear-gradient(135deg,rgba(255,255,255,0.45),transparent_45%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.18),transparent_28%),radial-gradient(circle_at_85%_15%,rgba(99,102,241,0.18),transparent_24%),linear-gradient(135deg,rgba(255,255,255,0.04),transparent_45%)]"
@@ -66,14 +66,19 @@ export function HeroSection() {
             </motion.a>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-3">
-            <StatBox value="ETB" label="Local currency" />
-            <StatBox value="EN / AM" label="Language ready" />
-            <StatBox value="Fast checkout" label="Chapa payment flow" />
+          <div className="flex flex-wrap items-center gap-3 rounded-[1.5rem] border border-border bg-background/60 p-4 backdrop-blur-md">
+            <HeroChip label="Easy checkout" />
+            <HeroChip label="Fast delivery" />
+            <HeroChip label="Curated collection" />
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <FeatureBox title="ETB pricing" description="Clear local pricing with no currency confusion." />
+            <FeatureBox title="EN / AM ready" description="Language support sits in the experience without taking over the layout." />
           </div>
         </div>
 
-        <div className="grid gap-4 rounded-[1.75rem] border border-border/80 bg-background/70 p-4 backdrop-blur-md">
+        <div className="grid gap-4 rounded-[1.75rem] border border-border/80 bg-background/60 p-4 backdrop-blur-md">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentSlide.id}
@@ -140,20 +145,19 @@ function FeatureBox({ title, description }: { title: string; description: string
   );
 }
 
-function StatBox({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="rounded-2xl border border-border bg-surfaceAlt px-4 py-4">
-      <p className="font-display text-2xl font-black tracking-tight text-foreground">{value}</p>
-      <p className="mt-1 text-xs font-semibold uppercase tracking-[0.2em] text-muted">{label}</p>
-    </div>
-  );
-}
-
 function MiniMetric({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-border bg-surface px-4 py-4 text-center">
       <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-muted">{label}</p>
       <p className="mt-2 font-display text-xl font-black tracking-tight">{value}</p>
     </div>
+  );
+}
+
+function HeroChip({ label }: { label: string }) {
+  return (
+    <span className="inline-flex items-center rounded-full border border-border bg-surface px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-foreground shadow-sm">
+      {label}
+    </span>
   );
 }

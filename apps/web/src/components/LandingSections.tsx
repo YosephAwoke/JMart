@@ -12,13 +12,13 @@ const categoryCards = [
     title: 'Footwear',
     description: 'Clean silhouettes built for comfort and movement.',
     href: '/catalog',
-    accent: 'from-indigo-500/20 to-transparent'
+    accent: 'from-emerald-400/20 to-transparent'
   },
   {
     title: 'Fragrance & gifts',
     description: 'Premium picks for gifting and personal use.',
     href: '/catalog',
-    accent: 'from-amber-500/20 to-transparent'
+    accent: 'from-teal-500/20 to-transparent'
   }
 ];
 
@@ -66,7 +66,7 @@ export function CategoryStrip() {
 
 export function BestSellersStory() {
   return (
-    <section className="grid gap-6 rounded-[2rem] border border-border bg-surface p-6 shadow-premium lg:grid-cols-[0.95fr_1.05fr] lg:p-8">
+    <section className="grid gap-6 rounded-[2rem] border border-border bg-surface/70 p-6 shadow-premium backdrop-blur-xl lg:grid-cols-[0.95fr_1.05fr] lg:p-8">
       <div>
         <p className="text-sm font-semibold uppercase tracking-[0.25em] text-accent">Why customers shop here</p>
         <h2 className="mt-2 font-display text-3xl font-bold tracking-tight">A simple store with thoughtful details.</h2>
@@ -100,8 +100,8 @@ export function BestSellersStory() {
 
 export function PremiumFooter() {
   return (
-    <footer className="mt-4 overflow-hidden rounded-[2.25rem] border border-border/50 bg-background/60 px-6 py-8 shadow-premium backdrop-blur-2xl lg:px-8">
-      <div className="mb-8 rounded-[1.75rem] border border-border bg-gradient-to-r from-accent/10 via-surface/80 to-indigo-500/10 p-5 backdrop-blur-xl">
+    <footer className="mt-4 overflow-hidden rounded-[2.25rem] border border-border/50 bg-background/55 px-6 py-8 shadow-premium backdrop-blur-2xl lg:px-8">
+      <div className="mb-8 rounded-[1.75rem] border border-border bg-gradient-to-r from-accent/12 via-surface/75 to-emerald-500/12 p-5 backdrop-blur-xl">
         <p className="text-sm font-semibold uppercase tracking-[0.25em] text-accent">Stay in the loop</p>
         <div className="mt-3 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
