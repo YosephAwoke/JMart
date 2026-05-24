@@ -10,6 +10,8 @@ type AuthContext = {
   logout: () => void;
   refresh: () => Promise<void>;
   updateProfile: (patch: Partial<UserProfile>) => Promise<void>;
+  addFavorite: (productId: string) => Promise<void>;
+  removeFavorite: (productId: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContext | undefined>(undefined);
@@ -68,7 +70,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(res.data.user);
   }
 
-  const value = useMemo(() => ({ user, token, login, register, logout, refresh, updateProfile }), [user, token]);
+  async function addFavorite(productId: string) {
+    if (!token) throw new Error('Not authenticated');
+    const res = await authService.addFavorite(token, productId);
+    setUser((u) => (u ? { ...u, favorites: res.data.favorites } : u));
+  }
+
+  async function removeFavorite(productId: string) {
+    if (!token) throw new Error('Not authenticated');
+    const res = await authService.removeFavorite(token, productId);
+    setUser((u) => (u ? { ...u, favorites: res.data.favorites } : u));
+  }
+
+  const value = useMemo(() => ({ user, token, login, register, logout, refresh, updateProfile, addFavorite, removeFavorite }), [user, token]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

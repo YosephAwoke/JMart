@@ -30,3 +30,20 @@ export function updateInMemoryUser(id: string, patch: AnyObject) {
   store[idx] = { ...store[idx], ...patch, updatedAt: new Date() };
   return store[idx];
 }
+
+export function addFavoriteInMemory(id: string, productId: string) {
+  const user = findInMemoryUserById(id);
+  if (!user) return null;
+  user.favorites = Array.isArray(user.favorites) ? user.favorites : [];
+  if (!user.favorites.includes(productId)) user.favorites.push(productId);
+  user.updatedAt = new Date();
+  return user;
+}
+
+export function removeFavoriteInMemory(id: string, productId: string) {
+  const user = findInMemoryUserById(id);
+  if (!user) return null;
+  user.favorites = (user.favorites || []).filter((p: string) => p !== productId);
+  user.updatedAt = new Date();
+  return user;
+}

@@ -59,9 +59,10 @@ function NavItem({ to, label }: { to: string; label: string }) {
 function AuthArea() {
   const auth = useAuth();
   if (!auth) return null;
-  if (auth.user) {
+    if (auth.user) {
     return (
       <div className="flex items-center gap-2">
+        <NavLink to="/favorites" className="rounded-full px-3 py-1.5 text-sm hover:text-accent">Favorites</NavLink>
         <NavLink to="/account" className="rounded-full px-3 py-1.5 text-sm hover:text-accent">{auth.user.fullName || auth.user.phone}</NavLink>
         <button onClick={auth.logout} className="rounded-full border border-border/40 px-3 py-1 text-sm">Sign out</button>
       </div>

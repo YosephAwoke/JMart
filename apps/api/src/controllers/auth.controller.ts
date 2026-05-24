@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import { UserModel } from '../models/User.js';
 import { createInMemoryUser, findInMemoryUser, findInMemoryUserById } from '../lib/inMemoryUsers.js';
+import { addFavoriteInMemory, removeFavoriteInMemory } from '../lib/inMemoryUsers.js';
 
 const JWT_SECRET = process.env.JWT_SECRET ?? 'dev-secret';
 
@@ -85,6 +86,70 @@ export async function updateProfile(req: Request, res: Response) {
     const user = await UserModel.findByIdAndUpdate(id, patch, { new: true }).lean();
     if (!user) return res.status(404).json({ message: 'User not found' });
     return res.json({ data: { user } });
+  } catch (err) {
+    return res.status(401).json({ message: 'Invalid token' });
+  }
+}
+
+export async function listFavorites(req: Request, res: Response) {
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.split(' ')[1];
+  if (!token) return res.status(401).json({ message: 'Not authenticated' });
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { sub: string };
+    const id = decoded.sub;
+    if (mongoose.connection.readyState !== 1) {
+      const user = findInMemoryUserById(id);
+      if (!user) return res.status(404).json({ message: 'User not found' });
+      return res.json({ data: { favorites: user.favorites || [] } });
+    }
+    const user = await UserModel.findById(id).select('favorites').lean();
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    return res.json({ data: { favorites: user.favorites || [] } });
+  } catch (err) {
+    return res.status(401).json({ message: 'Invalid token' });
+  }
+}
+
+export async function addFavorite(req: Request, res: Response) {
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.split(' ')[1];
+  if (!token) return res.status(401).json({ message: 'Not authenticated' });
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { sub: string };
+    const id = decoded.sub;
+    const productId = req.params.productId;
+    if (!productId) return res.status(400).json({ message: 'Missing productId' });
+    if (mongoose.connection.readyState !== 1) {
+      const updated = addFavoriteInMemory(id, productId);
+      if (!updated) return res.status(404).json({ message: 'User not found' });
+      return res.json({ data: { favorites: updated.favorites || [] } });
+    }
+    const user = await UserModel.findByIdAndUpdate(id, { $addToSet: { favorites: productId } }, { new: true }).select('favorites').lean();
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    return res.json({ data: { favorites: user.favorites || [] } });
+  } catch (err) {
+    return res.status(401).json({ message: 'Invalid token' });
+  }
+}
+
+export async function removeFavorite(req: Request, res: Response) {
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.split(' ')[1];
+  if (!token) return res.status(401).json({ message: 'Not authenticated' });
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { sub: string };
+    const id = decoded.sub;
+    const productId = req.params.productId;
+    if (!productId) return res.status(400).json({ message: 'Missing productId' });
+    if (mongoose.connection.readyState !== 1) {
+      const updated = removeFavoriteInMemory(id, productId);
+      if (!updated) return res.status(404).json({ message: 'User not found' });
+      return res.json({ data: { favorites: updated.favorites || [] } });
+    }
+    const user = await UserModel.findByIdAndUpdate(id, { $pull: { favorites: productId } }, { new: true }).select('favorites').lean();
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    return res.json({ data: { favorites: user.favorites || [] } });
   } catch (err) {
     return res.status(401).json({ message: 'Invalid token' });
   }

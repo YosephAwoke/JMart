@@ -35,3 +35,27 @@ export async function updateProfile(token: string, patch: Partial<UserProfile>) 
   if (!res.ok) throw new Error((await res.json()).message || 'Update failed');
   return (await res.json()) as { data: { user: UserProfile } };
 }
+
+export async function getFavorites(token: string) {
+  const res = await fetch('/api/auth/favorites', { headers: { Authorization: `Bearer ${token}` } });
+  if (!res.ok) throw new Error('Could not fetch favorites');
+  return (await res.json()) as { data: { favorites: string[] } };
+}
+
+export async function addFavorite(token: string, productId: string) {
+  const res = await fetch(`/api/auth/favorites/${encodeURIComponent(productId)}`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  if (!res.ok) throw new Error('Could not add favorite');
+  return (await res.json()) as { data: { favorites: string[] } };
+}
+
+export async function removeFavorite(token: string, productId: string) {
+  const res = await fetch(`/api/auth/favorites/${encodeURIComponent(productId)}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  if (!res.ok) throw new Error('Could not remove favorite');
+  return (await res.json()) as { data: { favorites: string[] } };
+}
