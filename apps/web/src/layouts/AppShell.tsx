@@ -9,6 +9,9 @@ import { ProductPage } from '../pages/ProductPage';
 import { CheckoutPage } from '../pages/CheckoutPage';
 import { ReceiptPage } from '../pages/ReceiptPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
+import LoginPage from '../pages/LoginPage';
+import RegisterPage from '../pages/RegisterPage';
+import AccountPage from '../pages/AccountPage';
 
 export function AppShell() {
   return (
@@ -25,6 +28,9 @@ export function AppShell() {
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/checkout/success" element={<ReceiptPage />} />
               <Route path="/home" element={<Navigate to="/" replace />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/account" element={<AccountPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </main>

@@ -16,6 +16,8 @@ const userSchema = new Schema(
       woreda: String,
       landmark: String
     }
+    ,
+    favorites: [{ type: String }]
   },
   { timestamps: true }
 );

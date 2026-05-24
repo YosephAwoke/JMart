@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { NavLink } from 'react-router-dom';
 import { useCart } from '../providers/CartProvider';
+import { useAuth } from '../providers/AuthProvider';
 import { ThemeToggle } from './ThemeToggle';
 import { LanguageToggle } from './LanguageToggle';
 
@@ -24,6 +25,8 @@ export function Navbar() {
         <div className="flex items-center gap-3">
           <LanguageToggle />
           <ThemeToggle />
+          {/** auth links */}
+          <AuthArea />
           <motion.button
             whileTap={{ scale: 0.97 }}
             onClick={openCart}
@@ -50,5 +53,24 @@ function NavItem({ to, label }: { to: string; label: string }) {
     >
       {label}
     </NavLink>
+  );
+}
+
+function AuthArea() {
+  const auth = useAuth();
+  if (!auth) return null;
+  if (auth.user) {
+    return (
+      <div className="flex items-center gap-2">
+        <NavLink to="/account" className="rounded-full px-3 py-1.5 text-sm hover:text-accent">{auth.user.fullName || auth.user.phone}</NavLink>
+        <button onClick={auth.logout} className="rounded-full border border-border/40 px-3 py-1 text-sm">Sign out</button>
+      </div>
+    );
+  }
+  return (
+    <div className="flex items-center gap-2">
+      <NavLink to="/login" className="rounded-full px-3 py-1.5 text-sm hover:text-accent">Sign in</NavLink>
+      <NavLink to="/register" className="rounded-full bg-accent px-3 py-1.5 text-sm font-semibold text-white">Sign up</NavLink>
+    </div>
   );
 }

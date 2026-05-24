@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from 'react';
+import { useMemo, useState, useEffect, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   type AddressDraft,
@@ -8,6 +8,7 @@ import {
   type CreateOrderRequest
 } from '@jmart/shared';
 import { useCart } from '../../providers/CartProvider';
+import { useAuth } from '../../providers/AuthProvider';
 import { createOrder } from '../../services/orders';
 
 export function AddisCheckoutForm() {
@@ -28,6 +29,15 @@ export function AddisCheckoutForm() {
     building: '',
     notes: ''
   });
+
+  const { user, updateProfile } = useAuth();
+  const [saveAsDefault, setSaveAsDefault] = useState(false);
+
+  useEffect(() => {
+    if (user?.defaultAddress) {
+      setForm((current) => ({ ...current, ...(user.defaultAddress as Partial<AddressDraft>) }));
+    }
+  }, [user]);
 
   const orderItems = useMemo(() => items.map(toOrderItem), [items]);
 
@@ -54,6 +64,13 @@ export function AddisCheckoutForm() {
       } satisfies CreateOrderRequest);
 
       clearCart();
+      if (saveAsDefault && user) {
+        try {
+          await updateProfile({ defaultAddress: form as any });
+        } catch (_) {
+          // ignore profile save errors for now
+        }
+      }
       setStatus('success');
       setCheckoutUrl(response.data.payment.checkoutUrl);
       setMessage(`Order ${response.data.payment.reference} created successfully.`);
@@ -130,6 +147,11 @@ export function AddisCheckoutForm() {
       <button type="submit" disabled={status === 'submitting'} className="w-full rounded-full bg-accent px-4 py-3 font-semibold text-white shadow-glow disabled:cursor-not-allowed disabled:opacity-70">
         {status === 'submitting' ? 'Creating order...' : 'Continue to payment'}
       </button>
+
+      <label className="mt-2 flex items-center gap-3 text-sm">
+        <input type="checkbox" checked={saveAsDefault} onChange={(e) => setSaveAsDefault(e.target.checked)} />
+        <span>Save this address as my default</span>
+      </label>
 
       <p className="text-xs leading-6 text-muted">
         Prefer to keep shopping? <Link to="/catalog" className="text-accent">Browse the catalog</Link>.

@@ -62,3 +62,19 @@ export interface CartItem {
   quantity: number;
   variantLabel?: string;
 }
+
+export interface UserProfile {
+  id: string;
+  fullName: string;
+  email?: string;
+  phone: string;
+  preferredLanguage?: LanguageCode;
+  preferredTheme?: ThemeMode;
+  defaultAddress?: AddressDraft | null;
+  favorites?: string[]; // product ids
+}
+
+export interface AuthResponse {
+  user: UserProfile | null;
+  token?: string;
+}
