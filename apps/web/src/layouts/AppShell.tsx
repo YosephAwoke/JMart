@@ -13,6 +13,8 @@ import LoginPage from '../pages/LoginPage';
 import RegisterPage from '../pages/RegisterPage';
 import AccountPage from '../pages/AccountPage';
 import FavoritesPage from '../pages/FavoritesPage';
+import ForgotPasswordPage from '../pages/ForgotPasswordPage';
+import ResetPasswordPage from '../pages/ResetPasswordPage';
 
 export function AppShell() {
   return (
@@ -33,6 +35,8 @@ export function AppShell() {
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/account" element={<AccountPage />} />
               <Route path="/favorites" element={<FavoritesPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </main>

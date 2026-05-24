@@ -34,7 +34,10 @@ export default function LoginPage() {
         </label>
         <button className="w-full rounded-full bg-accent px-4 py-3 font-semibold text-white">Sign in</button>
       </form>
-      <p className="text-sm">Don’t have an account? <Link to="/register" className="text-accent">Create one</Link></p>
+      <div className="flex items-center justify-between text-sm">
+        <p>Don’t have an account? <Link to="/register" className="text-accent">Create one</Link></p>
+        <Link to="/forgot-password" className="text-accent">Forgot password?</Link>
+      </div>
     </div>
   );
 }

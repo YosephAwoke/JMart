@@ -1,21 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { ProductSummary } from '@jmart/shared';
+import { mockCatalog } from '../data/mockCatalog';
 import { fetchProducts, matchesFilter, matchesSearch, sortProducts, type ProductSortKey } from '../services/products';
 
 export function useProducts(query: string, filter: string, sortKey: ProductSortKey = 'recommended') {
-  const [products, setProducts] = useState<ProductSummary[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<ProductSummary[]>(mockCatalog);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     let active = true;
 
     async function load() {
-      setLoading(true);
       const items = await fetchProducts();
-      if (active) {
-        setProducts(items);
-        setLoading(false);
-      }
+      if (active) setProducts(items);
     }
 
     load();

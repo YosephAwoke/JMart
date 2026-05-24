@@ -59,3 +59,23 @@ export async function removeFavorite(token: string, productId: string) {
   if (!res.ok) throw new Error('Could not remove favorite');
   return (await res.json()) as { data: { favorites: string[] } };
 }
+
+export async function forgotPassword(identifier: string) {
+  const res = await fetch('/api/auth/forgot-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ identifier })
+  });
+  if (!res.ok) throw new Error((await res.json()).message || 'Could not request reset');
+  return (await res.json()) as { data: { ok: boolean; resetToken: string } };
+}
+
+export async function resetPassword(token: string, password: string) {
+  const res = await fetch('/api/auth/reset-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token, password })
+  });
+  if (!res.ok) throw new Error((await res.json()).message || 'Could not reset password');
+  return (await res.json()) as { data: { ok: boolean } };
+}

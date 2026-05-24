@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
+import crypto from 'node:crypto';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import { UserModel } from '../models/User.js';
@@ -171,4 +172,55 @@ export async function removeFavorite(req: Request, res: Response) {
   } catch (err) {
     return res.status(401).json({ message: 'Invalid token' });
   }
+}
+
+export async function forgotPassword(req: Request, res: Response) {
+  const { identifier } = req.body as { identifier?: string };
+  if (!identifier) return res.status(400).json({ message: 'Missing identifier' });
+
+  const token = crypto.randomBytes(24).toString('hex');
+  const expires = new Date(Date.now() + 1000 * 60 * 30);
+
+  if (mongoose.connection.readyState !== 1) {
+    const user = findInMemoryUser((candidate) => candidate.phone === identifier || candidate.email === identifier);
+    if (user) {
+      user.passwordResetToken = token;
+      user.passwordResetExpires = expires;
+      user.updatedAt = new Date();
+    }
+    return res.json({ data: { ok: true, resetToken: token } });
+  }
+
+  const user = await UserModel.findOne({ $or: [{ phone: identifier }, { email: identifier }] });
+  if (user) {
+    user.passwordResetToken = token;
+    user.passwordResetExpires = expires;
+    await user.save();
+  }
+  return res.json({ data: { ok: true, resetToken: token } });
+}
+
+export async function resetPassword(req: Request, res: Response) {
+  const { token, password } = req.body as { token?: string; password?: string };
+  if (!token || !password) return res.status(400).json({ message: 'Missing token or password' });
+
+  const passwordHash = await bcrypt.hash(password, 10);
+
+  if (mongoose.connection.readyState !== 1) {
+    const user = findInMemoryUser((candidate) => candidate.passwordResetToken === token && candidate.passwordResetExpires && new Date(candidate.passwordResetExpires).getTime() > Date.now());
+    if (!user) return res.status(400).json({ message: 'Invalid or expired token' });
+    user.passwordHash = passwordHash;
+    user.passwordResetToken = null;
+    user.passwordResetExpires = null;
+    user.updatedAt = new Date();
+    return res.json({ data: { ok: true } });
+  }
+
+  const user = await UserModel.findOne({ passwordResetToken: token, passwordResetExpires: { $gt: new Date() } });
+  if (!user) return res.status(400).json({ message: 'Invalid or expired token' });
+  user.passwordHash = passwordHash;
+  user.passwordResetToken = null;
+  user.passwordResetExpires = null;
+  await user.save();
+  return res.json({ data: { ok: true } });
 }

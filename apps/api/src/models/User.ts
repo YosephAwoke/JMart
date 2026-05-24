@@ -10,14 +10,21 @@ const userSchema = new Schema(
     preferredLanguage: { type: String, enum: ['en', 'am'], default: 'en' },
     preferredTheme: { type: String, enum: ['light', 'dark'], default: 'light' },
     defaultAddress: {
+      fullName: String,
+      phone: String,
       region: String,
       city: String,
       subCity: String,
       woreda: String,
-      landmark: String
+      kebele: String,
+      landmark: String,
+      building: String,
+      notes: String
     }
     ,
-    favorites: [{ type: String }]
+    favorites: [{ type: String }],
+    passwordResetToken: { type: String, default: null },
+    passwordResetExpires: { type: Date, default: null }
   },
   { timestamps: true }
 );

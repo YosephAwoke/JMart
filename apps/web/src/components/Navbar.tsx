@@ -69,9 +69,6 @@ function AuthArea() {
     );
   }
   return (
-    <div className="flex items-center gap-2">
-      <NavLink to="/login" className="rounded-full px-3 py-1.5 text-sm hover:text-accent">Sign in</NavLink>
-      <NavLink to="/register" className="rounded-full bg-accent px-3 py-1.5 text-sm font-semibold text-white">Sign up</NavLink>
-    </div>
+      <NavLink to="/login" className="rounded-full bg-accent px-3 py-1.5 text-sm font-semibold text-white">Sign in</NavLink>
   );
 }

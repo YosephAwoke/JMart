@@ -1,20 +1,16 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { ProductCard } from '../components/ProductCard';
-import { fetchProducts } from '../services/products';
+import { useProducts } from '../hooks/useProducts';
 import { useAuth } from '../providers/AuthProvider';
 
 export default function FavoritesPage() {
-  const { user } = useAuth();
-  const [all, setAll] = useState([] as any[]);
-
-  useEffect(() => {
-    fetchProducts().then((p) => setAll(p)).catch(() => setAll([]));
-  }, []);
+  const { user, favorites: favoriteIds } = useAuth();
+  const { products: all } = useProducts('', 'all', 'recommended');
 
   const favorites = useMemo(() => {
-    if (!user?.favorites?.length) return [];
-    return all.filter((p) => user!.favorites!.includes(p.id));
-  }, [all, user]);
+    if (!favoriteIds.length) return [];
+    return all.filter((p) => favoriteIds.includes(p.id));
+  }, [all, favoriteIds]);
 
   if (!user) return <div className="text-center text-sm text-muted">Sign in to see your favorites.</div>;
 

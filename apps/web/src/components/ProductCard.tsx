@@ -7,12 +7,12 @@ import { useAuth } from '../providers/AuthProvider';
 
 export function ProductCard({ product }: { product: ProductSummary }) {
   const { addItem } = useCart();
-  const { user, addFavorite, removeFavorite } = useAuth();
+  const { user, favorites, addFavorite, removeFavorite } = useAuth();
   const navigate = useNavigate();
   const [pending, setPending] = useState(false);
   const [localFav, setLocalFav] = useState<boolean | null>(null);
 
-  const isFav = localFav ?? Boolean(user?.favorites?.includes(product.id));
+  const isFav = localFav ?? Boolean(favorites.includes(product.id));
 
   return (
     <motion.article whileHover={{ y: -6 }} className="overflow-hidden rounded-[1.75rem] border border-border bg-surface shadow-sm transition-shadow hover:shadow-premium">

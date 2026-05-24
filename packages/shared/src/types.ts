@@ -72,6 +72,8 @@ export interface UserProfile {
   preferredTheme?: ThemeMode;
   defaultAddress?: AddressDraft | null;
   favorites?: string[]; // product ids
+  passwordResetToken?: string | null;
+  passwordResetExpires?: string | null;
 }
 
 export interface AuthResponse {
