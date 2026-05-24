@@ -1,13 +1,18 @@
 import { motion } from 'framer-motion';
 import type { ProductSummary } from '@jmart/shared';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../providers/CartProvider';
 import { useAuth } from '../providers/AuthProvider';
 
 export function ProductCard({ product }: { product: ProductSummary }) {
   const { addItem } = useCart();
   const { user, addFavorite, removeFavorite } = useAuth();
+  const navigate = useNavigate();
+  const [pending, setPending] = useState(false);
+  const [localFav, setLocalFav] = useState<boolean | null>(null);
 
-  const isFav = Boolean(user?.favorites?.includes(product.id));
+  const isFav = localFav ?? Boolean(user?.favorites?.includes(product.id));
 
   return (
     <motion.article whileHover={{ y: -6 }} className="overflow-hidden rounded-[1.75rem] border border-border bg-surface shadow-sm transition-shadow hover:shadow-premium">
@@ -16,11 +21,24 @@ export function ProductCard({ product }: { product: ProductSummary }) {
         <div className="absolute left-4 top-4 rounded-full bg-background/80 px-3 py-1 text-xs font-semibold backdrop-blur">ETB {product.price.amount.toLocaleString()}</div>
         <button
           aria-label={isFav ? 'Remove favorite' : 'Add favorite'}
-          onClick={(e) => {
+          onClick={async (e) => {
             e.stopPropagation();
-            if (!user) return;
-            if (isFav) removeFavorite(product.id).catch(() => {});
-            else addFavorite(product.id).catch(() => {});
+            if (!user) return navigate('/login');
+            if (pending) return;
+            setPending(true);
+            // optimistic
+            setLocalFav(!isFav);
+            try {
+              if (isFav) await removeFavorite(product.id);
+              else await addFavorite(product.id);
+            } catch (err) {
+              // revert on error and show basic feedback
+              setLocalFav(isFav);
+              // eslint-disable-next-line no-alert
+              alert('Could not update favorites.');
+            } finally {
+              setPending(false);
+            }
           }}
           className="absolute right-4 top-4 rounded-full bg-background/80 p-2 backdrop-blur"
         >

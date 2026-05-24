@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import { UserModel } from '../models/User.js';
 import { createInMemoryUser, findInMemoryUser, findInMemoryUserById } from '../lib/inMemoryUsers.js';
+import { ProductModel } from '../models/Product.js';
+import { MOCK_PRODUCTS, type ProductSummary } from '@jmart/shared';
 import { addFavoriteInMemory, removeFavoriteInMemory } from '../lib/inMemoryUsers.js';
 
 const JWT_SECRET = process.env.JWT_SECRET ?? 'dev-secret';
@@ -118,8 +120,23 @@ export async function addFavorite(req: Request, res: Response) {
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as { sub: string };
     const id = decoded.sub;
-    const productId = req.params.productId;
-    if (!productId) return res.status(400).json({ message: 'Missing productId' });
+    const rawProductId = req.params.productId;
+    if (!rawProductId) return res.status(400).json({ message: 'Missing productId' });
+    const productId = Array.isArray(rawProductId) ? rawProductId[0] : rawProductId;
+
+    // validate product exists (db or fallback)
+    let found: any = null;
+    if (mongoose.connection.readyState === 1) {
+      try {
+        found = await ProductModel.findById(productId).lean();
+        if (!found) found = await ProductModel.findOne({ slug: productId }).lean();
+      } catch {}
+    }
+    if (!found) {
+      const fallback = (MOCK_PRODUCTS as ProductSummary[]).find((p) => p.id === productId || p.slug === productId);
+      if (fallback) found = fallback;
+    }
+    if (!found) return res.status(404).json({ message: 'Product not found' });
     if (mongoose.connection.readyState !== 1) {
       const updated = addFavoriteInMemory(id, productId);
       if (!updated) return res.status(404).json({ message: 'User not found' });
@@ -140,8 +157,9 @@ export async function removeFavorite(req: Request, res: Response) {
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as { sub: string };
     const id = decoded.sub;
-    const productId = req.params.productId;
-    if (!productId) return res.status(400).json({ message: 'Missing productId' });
+    const rawProductId = req.params.productId;
+    if (!rawProductId) return res.status(400).json({ message: 'Missing productId' });
+    const productId = Array.isArray(rawProductId) ? rawProductId[0] : rawProductId;
     if (mongoose.connection.readyState !== 1) {
       const updated = removeFavoriteInMemory(id, productId);
       if (!updated) return res.status(404).json({ message: 'User not found' });
