@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { resetPassword } from '../services/auth';
+import { inputFieldClass } from '../components/forms/inputStyles';
 
 function useQueryToken() {
   const { search } = useLocation();
@@ -40,15 +41,15 @@ export default function ResetPasswordPage() {
         {done ? <div className="rounded-2xl border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-700">Password updated.</div> : null}
         <label className="block text-sm">
           <span>Reset token</span>
-          <input value={token} onChange={(e) => setToken(e.target.value)} className="mt-2 w-full rounded-2xl border border-border px-4 py-3" />
+          <input value={token} onChange={(e) => setToken(e.target.value)} className={inputFieldClass} />
         </label>
         <label className="block text-sm">
           <span>New password</span>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="mt-2 w-full rounded-2xl border border-border px-4 py-3" />
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className={inputFieldClass} />
         </label>
         <label className="block text-sm">
           <span>Confirm password</span>
-          <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="mt-2 w-full rounded-2xl border border-border px-4 py-3" />
+          <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className={inputFieldClass} />
         </label>
         <button className="w-full rounded-full bg-accent px-4 py-3 font-semibold text-white">Update password</button>
       </form>

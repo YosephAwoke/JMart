@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../providers/AuthProvider';
+import { inputFieldClass } from '../components/forms/inputStyles';
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -28,19 +29,40 @@ export default function RegisterPage() {
         {error ? <div className="text-sm text-red-600">{error}</div> : null}
         <label className="block text-sm">
           <span>Full name</span>
-          <input value={fullName} onChange={(e) => setFullName(e.target.value)} className="mt-2 w-full rounded-2xl border border-border px-4 py-3" />
+          <input
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            className={inputFieldClass}
+            placeholder="Your full name"
+          />
         </label>
         <label className="block text-sm">
           <span>Phone</span>
-          <input value={phone} onChange={(e) => setPhone(e.target.value)} className="mt-2 w-full rounded-2xl border border-border px-4 py-3" />
+          <input
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className={inputFieldClass}
+            placeholder="+251900000000"
+          />
         </label>
         <label className="block text-sm">
           <span>Email (optional)</span>
-          <input value={email} onChange={(e) => setEmail(e.target.value)} className="mt-2 w-full rounded-2xl border border-border px-4 py-3" />
+          <input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={inputFieldClass}
+            placeholder="name@example.com"
+          />
         </label>
         <label className="block text-sm">
           <span>Password</span>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="mt-2 w-full rounded-2xl border border-border px-4 py-3" />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className={inputFieldClass}
+            placeholder="Create a password"
+          />
         </label>
         <button className="w-full rounded-full bg-accent px-4 py-3 font-semibold text-white">Create account</button>
       </form>

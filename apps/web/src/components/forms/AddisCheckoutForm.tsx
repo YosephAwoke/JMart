@@ -9,6 +9,7 @@ import {
 } from '@jmart/shared';
 import { useCart } from '../../providers/CartProvider';
 import { useAuth } from '../../providers/AuthProvider';
+import { inputFieldClass, selectFieldClass } from './inputStyles';
 import { createOrder } from '../../services/orders';
 
 export function AddisCheckoutForm() {
@@ -177,21 +178,19 @@ function Field({
   value: string;
   onChange: (value: string) => void;
 }) {
-  const base = 'mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/15';
-
   return (
     <label className="block text-sm font-medium">
       <span>{label}</span>
       {select ? (
-        <select className={base} value={value} onChange={(event) => onChange(event.target.value)}>
+        <select className={selectFieldClass} value={value} onChange={(event) => onChange(event.target.value)}>
           {options.map((option) => (
             <option key={option}>{option}</option>
           ))}
         </select>
       ) : textarea ? (
-        <textarea rows={4} className={base} placeholder={placeholder} value={value} onChange={(event) => onChange(event.target.value)} />
+        <textarea rows={4} className={inputFieldClass} placeholder={placeholder} value={value} onChange={(event) => onChange(event.target.value)} />
       ) : (
-        <input className={base} placeholder={placeholder} value={value} onChange={(event) => onChange(event.target.value)} />
+        <input className={inputFieldClass} placeholder={placeholder} value={value} onChange={(event) => onChange(event.target.value)} />
       )}
     </label>
   );

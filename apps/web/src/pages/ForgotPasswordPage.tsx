@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { forgotPassword } from '../services/auth';
+import { inputFieldClass } from '../components/forms/inputStyles';
 
 export default function ForgotPasswordPage() {
   const [identifier, setIdentifier] = useState('');
@@ -27,7 +28,12 @@ export default function ForgotPasswordPage() {
         {error ? <div className="text-sm text-red-600">{error}</div> : null}
         <label className="block text-sm">
           <span>Phone or email</span>
-          <input value={identifier} onChange={(e) => setIdentifier(e.target.value)} className="mt-2 w-full rounded-2xl border border-border px-4 py-3" />
+          <input
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
+            className={inputFieldClass}
+            placeholder="Phone number or email"
+          />
         </label>
         <button className="w-full rounded-full bg-accent px-4 py-3 font-semibold text-white">Send reset code</button>
       </form>

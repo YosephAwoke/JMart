@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { ProductSummary } from '@jmart/shared';
-import { mockCatalog } from '../data/mockCatalog';
-import { fetchProducts, matchesFilter, matchesSearch, sortProducts, type ProductSortKey } from '../services/products';
+import { readCachedProducts, fetchProducts, matchesFilter, matchesSearch, sortProducts, type ProductSortKey } from '../services/products';
 
 export function useProducts(query: string, filter: string, sortKey: ProductSortKey = 'recommended') {
-  const [products, setProducts] = useState<ProductSummary[]>(mockCatalog);
+  const [products, setProducts] = useState<ProductSummary[]>(() => readCachedProducts());
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {

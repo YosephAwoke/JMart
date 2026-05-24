@@ -2,22 +2,56 @@ import type { ProductSummary } from '@jmart/shared';
 import { mockCatalog } from '../data/mockCatalog';
 
 export type ProductSortKey = 'recommended' | 'price-asc' | 'price-desc' | 'top-rated' | 'alphabetical';
+const PRODUCT_CACHE_KEY = 'jmart-products-cache-v1';
+const PRODUCT_CACHE_TTL_MS = 1000 * 60 * 60 * 6;
 
 interface ApiProductResponse {
   data: Array<Partial<ProductSummary> & { _id?: string; createdAt?: string; updatedAt?: string }>;
+}
+
+type CachedProducts = {
+  savedAt: number;
+  products: ProductSummary[];
+};
+
+export function readCachedProducts() {
+  if (typeof window === 'undefined') return mockCatalog;
+  try {
+    const raw = window.localStorage.getItem(PRODUCT_CACHE_KEY);
+    if (!raw) return mockCatalog;
+    const cache = JSON.parse(raw) as CachedProducts;
+    if (!cache?.savedAt || Date.now() - cache.savedAt > PRODUCT_CACHE_TTL_MS || !Array.isArray(cache.products)) {
+      return mockCatalog;
+    }
+    return cache.products.length > 0 ? cache.products : mockCatalog;
+  } catch {
+    return mockCatalog;
+  }
+}
+
+export function writeCachedProducts(products: ProductSummary[]) {
+  if (typeof window === 'undefined') return;
+  try {
+    const payload: CachedProducts = { savedAt: Date.now(), products };
+    window.localStorage.setItem(PRODUCT_CACHE_KEY, JSON.stringify(payload));
+  } catch {
+    // ignore storage failures
+  }
 }
 
 export async function fetchProducts(): Promise<ProductSummary[]> {
   try {
     const response = await fetch('/api/products');
     if (!response.ok) {
-      return mockCatalog;
+      return readCachedProducts();
     }
 
     const payload = (await response.json()) as ApiProductResponse;
-    return payload.data.map(normalizeProduct).filter(Boolean) as ProductSummary[];
+    const products = payload.data.map(normalizeProduct).filter(Boolean) as ProductSummary[];
+    if (products.length > 0) writeCachedProducts(products);
+    return products.length > 0 ? products : readCachedProducts();
   } catch {
-    return mockCatalog;
+    return readCachedProducts();
   }
 }
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../providers/AuthProvider';
 import type { AddressDraft, ThemeMode, LanguageCode } from '@jmart/shared';
+import { inputFieldClass, selectFieldClass } from '../components/forms/inputStyles';
 
 export default function AccountPage() {
   const { user, updateProfile } = useAuth();
@@ -118,7 +119,7 @@ function Field({ label, value, onChange }: { label: string; value: string; onCha
   return (
     <label className="block text-sm">
       <span>{label}</span>
-      <input value={value} onChange={(event) => onChange(event.target.value)} className="mt-2 w-full rounded-2xl border border-border px-4 py-3" />
+      <input value={value} onChange={(event) => onChange(event.target.value)} className={inputFieldClass} />
     </label>
   );
 }
@@ -127,7 +128,7 @@ function SelectField<T extends string>({ label, value, onChange, options }: { la
   return (
     <label className="block text-sm">
       <span>{label}</span>
-      <select value={value} onChange={(event) => onChange(event.target.value as T)} className="mt-2 w-full rounded-2xl border border-border px-4 py-3">
+      <select value={value} onChange={(event) => onChange(event.target.value as T)} className={selectFieldClass}>
         {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
