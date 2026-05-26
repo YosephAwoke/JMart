@@ -5,19 +5,32 @@ import { useCart } from '../providers/CartProvider';
 import { useAuth } from '../providers/AuthProvider';
 import { useLocale } from '../providers/LocaleProvider';
 import { ThemeToggle } from './ThemeToggle';
+import { useTheme } from '../providers/ThemeProvider';
 
 export function Navbar() {
   const { openCart, items } = useCart();
   const auth = useAuth();
   const isLoggedIn = Boolean(auth?.user);
+  const { theme } = useTheme();
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/50 bg-background/55 backdrop-blur-2xl">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-        <div className="rounded-2xl border border-border/40 bg-surface/70 px-3 py-2 backdrop-blur-xl">
-          <p className="font-display text-lg font-extrabold tracking-tight">JMart</p>
-          <p className="text-xs text-muted">Premium Ethiopian commerce</p>
-        </div>
+        <Link to="/" className="rounded-2xl border border-border/40 bg-surface/70 px-3 py-2 backdrop-blur-xl flex items-center gap-3">
+          <img
+            src={theme === 'dark' ? '/assets/logos/logo-dark.png' : '/assets/logos/logo-light.png'}
+            alt="JMart"
+            className="h-12 sm:h-14 w-auto"
+            onError={(e) => {
+              // hide image if it's missing so text fallback shows
+              (e.target as HTMLImageElement).style.display = 'none';
+            }}
+          />
+          {/* <div className="hidden sm:block">
+            <p className="font-display text-lg font-extrabold tracking-tight">JMart</p>
+            <p className="text-xs text-muted">Premium Ethiopian commerce</p>
+          </div> */}
+        </Link>
 
         <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
           <NavItem to="/" label="Home" />
