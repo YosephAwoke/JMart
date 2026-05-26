@@ -9,6 +9,7 @@ import { ThemeToggle } from './ThemeToggle';
 export function Navbar() {
   const { openCart, items } = useCart();
   const auth = useAuth();
+  const isLoggedIn = Boolean(auth?.user);
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/50 bg-background/55 backdrop-blur-2xl">
@@ -21,12 +22,13 @@ export function Navbar() {
         <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
           <NavItem to="/" label="Home" />
           <NavItem to="/catalog" label="Catalog" />
-          <NavItem to="/about" label="About" />
           <NavItem to="/checkout" label="Checkout" />
+          {isLoggedIn ? <NavItem to="/favorites" label="Favorites" /> : null}
+          <NavItem to="/about" label="About" />
         </nav>
 
         <div className="flex items-center gap-3">
-          {auth?.user ? <UserMenu name={auth.user.fullName || auth.user.phone} /> : <NavLink to="/login" className="rounded-full bg-accent px-3 py-1.5 text-sm font-semibold text-white">Sign in</NavLink>}
+          {isLoggedIn ? <UserMenu name={auth.user?.fullName || auth.user?.phone || 'Account'} /> : <NavLink to="/login" className="rounded-full bg-accent px-3 py-1.5 text-sm font-semibold text-white">Sign in</NavLink>}
           <motion.button
             whileTap={{ scale: 0.97 }}
             onClick={openCart}
