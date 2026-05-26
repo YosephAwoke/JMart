@@ -32,6 +32,21 @@ const productSchema = new Schema(
       }
     ],
     tags: [{ type: String }],
+    brand: String,
+    vendor: String,
+    companyDescription: { type: localizedTextSchema },
+    availableSizes: [{ type: String }],
+    availableColors: [{ type: String }],
+    orderCount: { type: Number, default: 0 },
+    comments: [
+      {
+        id: { type: String, required: true },
+        userId: { type: String, required: true },
+        authorName: { type: String, required: true },
+        text: { type: String, required: true },
+        createdAt: { type: String, required: true }
+      }
+    ],
     isActive: { type: Boolean, default: true }
   },
   { timestamps: true }

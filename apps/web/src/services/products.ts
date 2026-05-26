@@ -131,3 +131,14 @@ export function sortProducts(products: ProductSummary[], sortKey: ProductSortKey
     return rightScore - leftScore;
   });
 }
+
+export async function fetchProductBySlug(slug: string): Promise<ProductSummary | null> {
+  try {
+    const response = await fetch(`/api/products/${encodeURIComponent(slug)}`);
+    if (!response.ok) return null;
+    const payload = (await response.json()) as { data: Partial<ProductSummary> & { _id?: string } };
+    return normalizeProduct(payload.data) ?? null;
+  } catch {
+    return null;
+  }
+}

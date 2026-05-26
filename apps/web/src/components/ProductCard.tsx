@@ -15,7 +15,16 @@ export function ProductCard({ product }: { product: ProductSummary }) {
   const isFav = localFav ?? Boolean(favorites.includes(product.id));
 
   return (
-    <motion.article whileHover={{ y: -6 }} className="overflow-hidden rounded-[1.75rem] border border-border bg-surface shadow-sm transition-shadow hover:shadow-premium">
+    <motion.article
+      whileHover={{ y: -6 }}
+      onClick={() => navigate(`/products/${product.slug}`)}
+      className="group cursor-pointer overflow-hidden rounded-[1.75rem] border border-border bg-surface shadow-sm transition-shadow hover:shadow-premium"
+      role="button"
+      tabIndex={0}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') navigate(`/products/${product.slug}`);
+      }}
+    >
       <div className="relative aspect-[4/3] overflow-hidden bg-surfaceAlt">
         <img src={product.images[0]?.url} alt={product.images[0]?.alt.en} className="h-full w-full object-cover transition duration-700 hover:scale-105" />
         <div className="absolute left-4 top-4 rounded-full bg-background/80 px-3 py-1 text-xs font-semibold backdrop-blur">ETB {product.price.amount.toLocaleString()}</div>
@@ -59,7 +68,13 @@ export function ProductCard({ product }: { product: ProductSummary }) {
             <p className="text-sm text-muted">Rating</p>
             <p className="font-semibold">{product.rating} / 5</p>
           </div>
-          <button onClick={() => addItem(product)} className="rounded-full bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-glow">
+          <button
+            onClick={(event) => {
+              event.stopPropagation();
+              addItem(product);
+            }}
+            className="rounded-full bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-glow"
+          >
             Add to cart
           </button>
         </div>

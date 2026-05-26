@@ -26,6 +26,14 @@ export interface ProductMedia {
   alt: LocalizedText;
 }
 
+export interface ProductComment {
+  id: string;
+  userId: string;
+  authorName: string;
+  text: string;
+  createdAt: string;
+}
+
 export interface ProductSummary {
   id: string;
   slug: string;
@@ -39,6 +47,13 @@ export interface ProductSummary {
   images: ProductMedia[];
   variants: ProductVariant[];
   tags: string[];
+  brand?: string;
+  vendor?: string;
+  companyDescription?: LocalizedText;
+  availableSizes?: string[];
+  availableColors?: string[];
+  orderCount?: number;
+  comments?: ProductComment[];
 }
 
 export interface AddressDraft {
@@ -55,6 +70,7 @@ export interface AddressDraft {
 }
 
 export interface CartItem {
+  cartKey?: string;
   productId: string;
   title: LocalizedText;
   price: Money;

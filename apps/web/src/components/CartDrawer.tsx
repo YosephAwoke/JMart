@@ -1,9 +1,15 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useCart } from '../providers/CartProvider';
 
 export function CartDrawer() {
-  const { isOpen, closeCart, items, total, removeItem } = useCart();
+  const { isOpen, closeCart, items, total, removeItem, setItemQuantity } = useCart();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (isOpen) closeCart();
+  }, [location.pathname]);
 
   return (
     <AnimatePresence>
@@ -29,23 +35,32 @@ export function CartDrawer() {
             </div>
             <div className="flex-1 space-y-4 overflow-y-auto p-5">
               {items.length === 0 ? <p className="text-sm text-muted">No items in cart yet.</p> : null}
-              {items.map((item) => (
-                <div key={item.productId} className="flex gap-4 rounded-2xl border border-border bg-surface p-3">
+              {items.map((item) => {
+                const cartKey = item.cartKey ?? item.productId;
+                return (
+                <div key={cartKey} className="flex gap-4 rounded-2xl border border-border bg-surface p-3">
                   <img src={item.image} alt={item.title.en} className="h-20 w-20 rounded-xl object-cover" />
                   <div className="flex-1">
                     <p className="font-semibold">{item.title.en}</p>
+                    {item.variantLabel ? <p className="text-xs text-muted">{item.variantLabel}</p> : null}
                     <p className="text-sm text-muted">ETB {item.price.amount.toLocaleString()}</p>
-                    <button className="mt-2 text-sm text-accent" onClick={() => removeItem(item.productId)}>Remove</button>
+                    <div className="mt-3 flex items-center gap-2">
+                      <QtyButton onClick={() => setItemQuantity(cartKey, item.quantity - 1)}>-</QtyButton>
+                      <span className="min-w-8 text-center text-sm font-semibold">{item.quantity}</span>
+                      <QtyButton onClick={() => setItemQuantity(cartKey, item.quantity + 1)}>+</QtyButton>
+                      <button className="ml-2 text-sm text-accent" onClick={() => removeItem(cartKey)}>Remove</button>
+                    </div>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
             <div className="border-t border-border p-5">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted">Subtotal</span>
                 <span className="font-semibold">ETB {total.toLocaleString()}</span>
               </div>
-              <Link to="/checkout" className="mt-4 block w-full rounded-full bg-accent px-4 py-3 text-center font-semibold text-white shadow-glow">
+              <Link to="/checkout" onClick={closeCart} className="mt-4 block w-full rounded-full bg-accent px-4 py-3 text-center font-semibold text-white shadow-glow">
                 Proceed to checkout
               </Link>
             </div>
@@ -53,5 +68,13 @@ export function CartDrawer() {
         </>
       ) : null}
     </AnimatePresence>
+  );
+}
+
+function QtyButton({ children, onClick }: { children: string; onClick: () => void }) {
+  return (
+    <button onClick={onClick} className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-background text-sm font-semibold hover:border-accent hover:text-accent">
+      {children}
+    </button>
   );
 }

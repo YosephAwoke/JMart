@@ -1,13 +1,31 @@
 import type { AuthResponse, UserProfile } from '@jmart/shared';
 
+async function readResponseBody<T>(res: Response): Promise<T | null> {
+  const text = await res.text();
+  if (!text.trim()) return null;
+
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    throw new Error(text);
+  }
+}
+
+async function readErrorMessage(res: Response, fallback: string) {
+  const body = await readResponseBody<{ message?: string }>(res);
+  return body?.message || fallback;
+}
+
 export async function register(payload: { fullName: string; email?: string; phone: string; password: string }) {
   const res = await fetch('/api/auth/register', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
   });
-  if (!res.ok) throw new Error((await res.json()).message || 'Registration failed');
-  return (await res.json()) as { data: { user: UserProfile; token: string } };
+  if (!res.ok) throw new Error(await readErrorMessage(res, 'Registration failed'));
+  const data = await readResponseBody<{ data: { user: UserProfile; token: string } }>(res);
+  if (!data) throw new Error('Registration failed: empty response from server');
+  return data;
 }
 
 export async function login(payload: { phone: string; password: string }) {
@@ -16,14 +34,18 @@ export async function login(payload: { phone: string; password: string }) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
   });
-  if (!res.ok) throw new Error((await res.json()).message || 'Login failed');
-  return (await res.json()) as { data: { user: UserProfile; token: string } };
+  if (!res.ok) throw new Error(await readErrorMessage(res, 'Login failed'));
+  const data = await readResponseBody<{ data: { user: UserProfile; token: string } }>(res);
+  if (!data) throw new Error('Login failed: empty response from server');
+  return data;
 }
 
 export async function me(token: string) {
   const res = await fetch('/api/auth/me', { headers: { Authorization: `Bearer ${token}` } });
   if (!res.ok) throw new Error('Not authenticated');
-  return (await res.json()) as { data: { user: UserProfile } };
+  const data = await readResponseBody<{ data: { user: UserProfile } }>(res);
+  if (!data) throw new Error('Not authenticated');
+  return data;
 }
 
 export async function updateProfile(token: string, patch: Partial<UserProfile>) {
@@ -32,8 +54,10 @@ export async function updateProfile(token: string, patch: Partial<UserProfile>) 
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
     body: JSON.stringify(patch)
   });
-  if (!res.ok) throw new Error((await res.json()).message || 'Update failed');
-  return (await res.json()) as { data: { user: UserProfile } };
+  if (!res.ok) throw new Error(await readErrorMessage(res, 'Update failed'));
+  const data = await readResponseBody<{ data: { user: UserProfile } }>(res);
+  if (!data) throw new Error('Update failed: empty response from server');
+  return data;
 }
 
 export async function getFavorites(token: string) {
@@ -66,8 +90,10 @@ export async function forgotPassword(identifier: string) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ identifier })
   });
-  if (!res.ok) throw new Error((await res.json()).message || 'Could not request reset');
-  return (await res.json()) as { data: { ok: boolean; resetToken: string } };
+  if (!res.ok) throw new Error(await readErrorMessage(res, 'Could not request reset'));
+  const data = await readResponseBody<{ data: { ok: boolean; resetToken: string } }>(res);
+  if (!data) throw new Error('Could not request reset: empty response from server');
+  return data;
 }
 
 export async function resetPassword(token: string, password: string) {
@@ -76,6 +102,8 @@ export async function resetPassword(token: string, password: string) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ token, password })
   });
-  if (!res.ok) throw new Error((await res.json()).message || 'Could not reset password');
-  return (await res.json()) as { data: { ok: boolean } };
+  if (!res.ok) throw new Error(await readErrorMessage(res, 'Could not reset password'));
+  const data = await readResponseBody<{ data: { ok: boolean } }>(res);
+  if (!data) throw new Error('Could not reset password: empty response from server');
+  return data;
 }

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../providers/CartProvider';
 
 export function CheckoutPage() {
-  const { items, total } = useCart();
+  const { items, total, removeItem, setItemQuantity } = useCart();
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_0.9fr]">
@@ -22,6 +22,27 @@ export function CheckoutPage() {
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted">Cart items</span>
             <span className="font-semibold">{items.length}</span>
+          </div>
+          <div className="mt-4 space-y-3">
+            {items.map((item) => {
+              const cartKey = item.cartKey ?? item.productId;
+              return (
+              <div key={cartKey} className="flex items-center gap-4 rounded-2xl border border-border bg-surface p-3">
+                <img src={item.image} alt={item.title.en} className="h-16 w-16 rounded-xl object-cover" />
+                <div className="flex-1">
+                  <p className="font-semibold">{item.title.en}</p>
+                  {item.variantLabel ? <p className="text-xs text-muted">{item.variantLabel}</p> : null}
+                  <p className="text-sm text-muted">ETB {(item.price.amount * item.quantity).toLocaleString()}</p>
+                  <div className="mt-2 flex items-center gap-2">
+                    <QtyButton onClick={() => setItemQuantity(cartKey, item.quantity - 1)}>-</QtyButton>
+                    <span className="min-w-8 text-center text-sm font-semibold">{item.quantity}</span>
+                    <QtyButton onClick={() => setItemQuantity(cartKey, item.quantity + 1)}>+</QtyButton>
+                    <button className="ml-2 text-sm text-accent" onClick={() => removeItem(cartKey)}>Remove</button>
+                  </div>
+                </div>
+              </div>
+              );
+            })}
           </div>
           <div className="mt-3 flex items-center justify-between text-sm">
             <span className="text-muted">Subtotal</span>
@@ -46,5 +67,13 @@ function InfoCard({ title, text }: { title: string; text: string }) {
       <p className="text-sm font-semibold uppercase tracking-[0.18em] text-accent">{title}</p>
       <p className="mt-2 text-sm leading-6 text-muted">{text}</p>
     </div>
+  );
+}
+
+function QtyButton({ children, onClick }: { children: string; onClick: () => void }) {
+  return (
+    <button onClick={onClick} className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-background text-sm font-semibold hover:border-accent hover:text-accent">
+      {children}
+    </button>
   );
 }
