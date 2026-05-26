@@ -107,3 +107,15 @@ export async function resetPassword(token: string, password: string) {
   if (!data) throw new Error('Could not reset password: empty response from server');
   return data;
 }
+
+export async function changePassword(token: string, payload: { currentPassword: string; newPassword: string }) {
+  const res = await fetch('/api/auth/change-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify(payload)
+  });
+  if (!res.ok) throw new Error(await readErrorMessage(res, 'Could not change password'));
+  const data = await readResponseBody<{ data: { ok: boolean } }>(res);
+  if (!data) throw new Error('Could not change password: empty response from server');
+  return data;
+}

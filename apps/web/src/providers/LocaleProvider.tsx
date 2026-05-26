@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from 'react';
 import type { LanguageCode } from '@jmart/shared';
 import { DEFAULT_LANGUAGE, translations } from '@jmart/shared';
 
@@ -32,6 +32,10 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
       setLanguage,
       t: translations[language] as TranslationSet
     };
+  }, [language]);
+
+  useEffect(() => {
+    document.documentElement.lang = language;
   }, [language]);
 
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;

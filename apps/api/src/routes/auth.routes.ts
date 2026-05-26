@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { register, login, me, updateProfile, listFavorites, addFavorite, removeFavorite, forgotPassword, resetPassword } from '../controllers/auth.controller.js';
+import { register, login, me, updateProfile, listFavorites, addFavorite, removeFavorite, forgotPassword, resetPassword, changePassword } from '../controllers/auth.controller.js';
 
 export const authRouter = Router();
 
@@ -12,3 +12,4 @@ authRouter.post('/favorites/:productId', addFavorite);
 authRouter.delete('/favorites/:productId', removeFavorite);
 authRouter.post('/forgot-password', forgotPassword);
 authRouter.post('/reset-password', resetPassword);
+authRouter.post('/change-password', changePassword);

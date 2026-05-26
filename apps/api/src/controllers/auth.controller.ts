@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import { UserModel } from '../models/User.js';
-import { createInMemoryUser, findInMemoryUser, findInMemoryUserById } from '../lib/inMemoryUsers.js';
+import { createInMemoryUser, findInMemoryUser, findInMemoryUserById, changeInMemoryUserPassword } from '../lib/inMemoryUsers.js';
 import { ProductModel } from '../models/Product.js';
 import { MOCK_PRODUCTS, type ProductSummary } from '@jmart/shared';
 import { addFavoriteInMemory, removeFavoriteInMemory } from '../lib/inMemoryUsers.js';
@@ -223,4 +223,36 @@ export async function resetPassword(req: Request, res: Response) {
   user.passwordResetExpires = null;
   await user.save();
   return res.json({ data: { ok: true } });
+}
+
+export async function changePassword(req: Request, res: Response) {
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.split(' ')[1];
+  const { currentPassword, newPassword } = req.body as { currentPassword?: string; newPassword?: string };
+  if (!token) return res.status(401).json({ message: 'Not authenticated' });
+  if (!currentPassword || !newPassword) return res.status(400).json({ message: 'Missing current or new password' });
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { sub: string };
+    const id = decoded.sub;
+
+    if (mongoose.connection.readyState !== 1) {
+      const user = findInMemoryUserById(id);
+      if (!user) return res.status(404).json({ message: 'User not found' });
+      const valid = await bcrypt.compare(currentPassword, user.passwordHash);
+      if (!valid) return res.status(400).json({ message: 'Current password is incorrect' });
+      changeInMemoryUserPassword(id, await bcrypt.hash(newPassword, 10));
+      return res.json({ data: { ok: true } });
+    }
+
+    const user = await UserModel.findById(id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    const valid = await bcrypt.compare(currentPassword, (user as any).passwordHash);
+    if (!valid) return res.status(400).json({ message: 'Current password is incorrect' });
+    user.passwordHash = await bcrypt.hash(newPassword, 10);
+    await user.save();
+    return res.json({ data: { ok: true } });
+  } catch (err) {
+    return res.status(401).json({ message: 'Invalid token' });
+  }
 }

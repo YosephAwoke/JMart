@@ -31,6 +31,14 @@ export function updateInMemoryUser(id: string, patch: AnyObject) {
   return store[idx];
 }
 
+export function changeInMemoryUserPassword(id: string, passwordHash: string) {
+  const user = findInMemoryUserById(id);
+  if (!user) return null;
+  user.passwordHash = passwordHash;
+  user.updatedAt = new Date();
+  return user;
+}
+
 export function addFavoriteInMemory(id: string, productId: string) {
   const user = findInMemoryUserById(id);
   if (!user) return null;
