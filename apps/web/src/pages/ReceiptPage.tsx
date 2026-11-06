@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import type { AddressDraft, CartItem } from '@jmart/shared';
+import { apiUrl } from '../services/api';
 
 interface ReceiptState {
   reference: string;
@@ -26,7 +27,7 @@ export function ReceiptPage() {
 
     const check = async () => {
       try {
-        const res = await fetch(`/api/orders/${orderState.orderId}`);
+        const res = await fetch(apiUrl(`/api/orders/${orderState.orderId}`));
         if (!res.ok) return;
         const json = await res.json();
         const ord = json?.data?.order;
@@ -81,7 +82,7 @@ export function ReceiptPage() {
             {orderState.orderId ? (
               <button
                 onClick={async () => {
-                  await fetch(`/api/payments/mock/${orderState.orderId}`, { method: 'POST' });
+                  await fetch(apiUrl(`/api/payments/mock/${orderState.orderId}`), { method: 'POST' });
                 }}
                 className="mt-2 inline-flex rounded-full border border-border bg-background px-4 py-2 text-sm font-semibold"
               >

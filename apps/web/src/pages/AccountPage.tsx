@@ -3,6 +3,7 @@ import { useAuth } from '../providers/AuthProvider';
 import type { AddressDraft, ThemeMode, LanguageCode } from '@jmart/shared';
 import { inputFieldClass, selectFieldClass } from '../components/forms/inputStyles';
 import * as authService from '../services/auth';
+import { apiUrl } from '../services/api';
 
 type PanelId = 'account' | 'password' | 'address' | 'orders' | 'location';
 
@@ -80,7 +81,7 @@ export default function AccountPage() {
     async function loadOrders() {
       setOrdersLoading(true);
       try {
-        const response = await fetch('/api/orders');
+        const response = await fetch(apiUrl('/api/orders'));
         if (!response.ok) return;
         const payload = (await response.json()) as { data?: OrderRow[] };
         if (!mounted) return;

@@ -1,7 +1,8 @@
 import type { CreateOrderRequest, CreateOrderResponse } from '@jmart/shared';
+import { apiUrl } from './api';
 
 export async function createOrder(payload: CreateOrderRequest): Promise<CreateOrderResponse> {
-  const response = await fetch('/api/orders', {
+  const response = await fetch(apiUrl('/api/orders'), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

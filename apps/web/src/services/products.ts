@@ -1,5 +1,6 @@
 import type { ProductSummary } from '@jmart/shared';
 import { mockCatalog } from '../data/mockCatalog';
+import { apiUrl } from './api';
 
 export type ProductSortKey = 'recommended' | 'price-asc' | 'price-desc' | 'top-rated' | 'alphabetical';
 const PRODUCT_CACHE_KEY = 'jmart-products-cache-v1';
@@ -61,7 +62,7 @@ export function writeCachedProducts(products: ProductSummary[]) {
 
 export async function fetchProducts(useFallback = true): Promise<ProductSummary[]> {
   try {
-    const response = await fetch('/api/products');
+    const response = await fetch(apiUrl('/api/products'));
     if (!response.ok) {
       return useFallback ? readCachedProducts() : [];
     }
@@ -160,7 +161,7 @@ export function sortProducts(products: ProductSummary[], sortKey: ProductSortKey
 
 export async function fetchProductBySlug(slug: string): Promise<ProductSummary | null> {
   try {
-    const response = await fetch(`/api/products/${encodeURIComponent(slug)}`);
+    const response = await fetch(apiUrl(`/api/products/${encodeURIComponent(slug)}`));
     if (!response.ok) return null;
     const payload = (await response.json()) as { data: ApiProduct };
     return normalizeProduct(payload.data) ?? null;

@@ -5,6 +5,7 @@ import type { ProductComment, ProductSummary } from '@jmart/shared';
 import { useCart } from '../providers/CartProvider';
 import { useAuth } from '../providers/AuthProvider';
 import { fetchProductBySlug, fetchProducts } from '../services/products';
+import { apiUrl } from '../services/api';
 import { inputFieldClass } from '../components/forms/inputStyles';
 
 type ProductDetail = ProductSummary;
@@ -78,7 +79,7 @@ export function ProductPage() {
       if (!slug) return;
 
       // Load comments in the background so the detail page renders immediately.
-      fetch(`/api/products/${encodeURIComponent(slug)}/comments`)
+      fetch(apiUrl(`/api/products/${encodeURIComponent(slug)}/comments`))
         .then((res) => (res.ok ? res.json() : { data: [] }))
         .then((payload) => {
           if (mounted) setComments(payload.data ?? []);
@@ -133,7 +134,7 @@ export function ProductPage() {
     if (!slug || !user || !commentText.trim()) return;
     setCommentBusy(true);
     try {
-      const response = await fetch(`/api/products/${encodeURIComponent(slug)}/comments`, {
+      const response = await fetch(apiUrl(`/api/products/${encodeURIComponent(slug)}/comments`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

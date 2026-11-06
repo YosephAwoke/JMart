@@ -1,4 +1,5 @@
 import type { AuthResponse, UserProfile } from '@jmart/shared';
+import { apiUrl } from './api';
 
 async function readResponseBody<T>(res: Response): Promise<T | null> {
   const text = await res.text();
@@ -17,7 +18,7 @@ async function readErrorMessage(res: Response, fallback: string) {
 }
 
 export async function register(payload: { fullName: string; email?: string; phone: string; password: string }) {
-  const res = await fetch('/api/auth/register', {
+  const res = await fetch(apiUrl('/api/auth/register'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
@@ -29,7 +30,7 @@ export async function register(payload: { fullName: string; email?: string; phon
 }
 
 export async function login(payload: { phone: string; password: string }) {
-  const res = await fetch('/api/auth/login', {
+  const res = await fetch(apiUrl('/api/auth/login'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
@@ -41,7 +42,7 @@ export async function login(payload: { phone: string; password: string }) {
 }
 
 export async function me(token: string) {
-  const res = await fetch('/api/auth/me', { headers: { Authorization: `Bearer ${token}` } });
+  const res = await fetch(apiUrl('/api/auth/me'), { headers: { Authorization: `Bearer ${token}` } });
   if (!res.ok) throw new Error('Not authenticated');
   const data = await readResponseBody<{ data: { user: UserProfile } }>(res);
   if (!data) throw new Error('Not authenticated');
@@ -49,7 +50,7 @@ export async function me(token: string) {
 }
 
 export async function updateProfile(token: string, patch: Partial<UserProfile>) {
-  const res = await fetch('/api/auth/me', {
+  const res = await fetch(apiUrl('/api/auth/me'), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
     body: JSON.stringify(patch)
@@ -61,13 +62,13 @@ export async function updateProfile(token: string, patch: Partial<UserProfile>) 
 }
 
 export async function getFavorites(token: string) {
-  const res = await fetch('/api/auth/favorites', { headers: { Authorization: `Bearer ${token}` } });
+  const res = await fetch(apiUrl('/api/auth/favorites'), { headers: { Authorization: `Bearer ${token}` } });
   if (!res.ok) throw new Error('Could not fetch favorites');
   return (await res.json()) as { data: { favorites: string[] } };
 }
 
 export async function addFavorite(token: string, productId: string) {
-  const res = await fetch(`/api/auth/favorites/${encodeURIComponent(productId)}`, {
+  const res = await fetch(apiUrl(`/api/auth/favorites/${encodeURIComponent(productId)}`), {
     method: 'POST',
     headers: { Authorization: `Bearer ${token}` }
   });
@@ -76,7 +77,7 @@ export async function addFavorite(token: string, productId: string) {
 }
 
 export async function removeFavorite(token: string, productId: string) {
-  const res = await fetch(`/api/auth/favorites/${encodeURIComponent(productId)}`, {
+  const res = await fetch(apiUrl(`/api/auth/favorites/${encodeURIComponent(productId)}`), {
     method: 'DELETE',
     headers: { Authorization: `Bearer ${token}` }
   });
@@ -85,7 +86,7 @@ export async function removeFavorite(token: string, productId: string) {
 }
 
 export async function forgotPassword(identifier: string) {
-  const res = await fetch('/api/auth/forgot-password', {
+  const res = await fetch(apiUrl('/api/auth/forgot-password'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ identifier })
@@ -97,7 +98,7 @@ export async function forgotPassword(identifier: string) {
 }
 
 export async function resetPassword(token: string, password: string) {
-  const res = await fetch('/api/auth/reset-password', {
+  const res = await fetch(apiUrl('/api/auth/reset-password'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ token, password })
@@ -109,7 +110,7 @@ export async function resetPassword(token: string, password: string) {
 }
 
 export async function changePassword(token: string, payload: { currentPassword: string; newPassword: string }) {
-  const res = await fetch('/api/auth/change-password', {
+  const res = await fetch(apiUrl('/api/auth/change-password'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
     body: JSON.stringify(payload)
