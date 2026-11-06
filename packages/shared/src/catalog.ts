@@ -2,72 +2,107 @@ import type { ProductSummary } from './types.js';
 
 export const MOCK_PRODUCTS: ProductSummary[] = [
   {
-    id: '1',
-    slug: 'aurora-bag',
-    title: { en: 'Aurora Tote', am: 'አውሮራ ቦርሳ' },
+    id: 'classic-cotton-tshirt',
+    slug: 'classic-cotton-tshirt',
+    title: { en: 'Classic Cotton T-Shirt', am: 'የጥጥ ክላሲክ ቲሸርት' },
     description: {
-      en: 'Minimal form, elevated finish, built for daily city carry.',
-      am: 'ለዕለታዊ ከተማዊ ጉዞ የተነደፈ ንጹሕ እና ዘመናዊ ቅርጽ.'
+      en: 'A breathable, everyday cotton T-shirt with a comfortable regular fit.',
+      am: 'ለዕለታዊ አጠቃቀም ምቹ ቅርጽ ያለው እና አየር የሚያስገባ የጥጥ ቲሸርት።'
     },
-    price: { amount: 4200, currency: 'ETB' },
-    compareAtPrice: { amount: 5200, currency: 'ETB' },
-    rating: 4.8,
-    reviewCount: 126,
-    stock: 24,
+    price: { amount: 1250, currency: 'ETB' },
+    compareAtPrice: { amount: 1500, currency: 'ETB' },
+    rating: 4.7,
+    reviewCount: 84,
+    stock: 36,
     images: [
-      { id: '1a', url: 'https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&w=1200&q=80', alt: { en: 'Aurora Tote front view', am: 'የቦርሳው የፊት እይታ' } },
-      { id: '1b', url: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=1200&q=80', alt: { en: 'Aurora Tote side view', am: 'የቦርሳው የጎን እይታ' } }
+      {
+        id: 'classic-cotton-tshirt-front',
+        url: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1200&q=80',
+        alt: { en: 'Classic white cotton T-shirt', am: 'ክላሲክ ነጭ የጥጥ ቲሸርት' }
+      },
+      {
+        id: 'classic-cotton-tshirt-detail',
+        url: 'https://images.unsplash.com/photo-1583743814966-8936f37f4678?auto=format&fit=crop&w=1200&q=80',
+        alt: { en: 'Classic cotton T-shirt detail', am: 'የጥጥ ቲሸርት ዝርዝር' }
+      }
     ],
     variants: [
-      { id: 'v1', name: { en: 'Color', am: 'ቀለም' }, value: 'Olive', stock: 8 },
-      { id: 'v2', name: { en: 'Color', am: 'ቀለም' }, value: 'Sand', stock: 16 }
+      { id: 'classic-cotton-tshirt-s', name: { en: 'Size', am: 'መጠን' }, value: 'S', stock: 10 },
+      { id: 'classic-cotton-tshirt-m', name: { en: 'Size', am: 'መጠን' }, value: 'M', stock: 14 },
+      { id: 'classic-cotton-tshirt-l', name: { en: 'Size', am: 'መጠን' }, value: 'L', stock: 12 }
     ],
-    tags: ['featured', 'new-arrival']
+    tags: ['featured', 'new-arrival', 'clothing'],
+    brand: 'JMart Essentials',
+    vendor: 'JMart Store',
+    availableSizes: ['S', 'M', 'L'],
+    availableColors: ['White', 'Black', 'Navy']
   },
   {
-    id: '2',
-    slug: 'sera-sneakers',
-    title: { en: 'Sera Sneakers', am: 'ሴራ ስኒከርስ' },
+    id: 'velour-noir-perfume',
+    slug: 'velour-noir-perfume',
+    title: { en: 'Velour Noir Eau de Parfum', am: 'ቬሎር ኖየር ሽቶ' },
     description: {
-      en: 'Clean silhouette with a cushioned profile for everyday movement.',
-      am: 'ለዕለታዊ እንቅስቃሴ የተስተካከለ ንፁሕ እና ምቹ ቅርጽ.'
+      en: 'A luxurious evening fragrance with warm amber, soft florals, and polished woods.',
+      am: 'አምበር፣ ለስላሳ አበባዎችና የተስተካከለ የእንጨት መዓዛ ያለው የምሽት ሽቶ።'
     },
-    price: { amount: 6850, currency: 'ETB' },
-    compareAtPrice: { amount: 7400, currency: 'ETB' },
-    rating: 4.6,
-    reviewCount: 89,
+    price: { amount: 6800, currency: 'ETB' },
+    compareAtPrice: { amount: 7500, currency: 'ETB' },
+    rating: 4.9,
+    reviewCount: 57,
     stock: 18,
     images: [
-      { id: '2a', url: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1200&q=80', alt: { en: 'Sera Sneakers angled view', am: 'የስኒከሩ የአንግል እይታ' } },
-      { id: '2b', url: 'https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=1200&q=80', alt: { en: 'Sera Sneakers detail view', am: 'የስኒከሩ ዝርዝር እይታ' } }
+      {
+        id: 'velour-noir-perfume-bottle',
+        url: 'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=1200&q=80',
+        alt: { en: 'Luxury perfume bottle', am: 'የቅንጦት ሽቶ ጠርሙስ' }
+      },
+      {
+        id: 'velour-noir-perfume-box',
+        url: 'https://images.unsplash.com/photo-1557170334-a9632e77c6e4?auto=format&fit=crop&w=1200&q=80',
+        alt: { en: 'Luxury perfume packaging', am: 'የቅንጦት ሽቶ ማሸጊያ' }
+      }
     ],
     variants: [
-      { id: 'v3', name: { en: 'Size', am: 'መጠን' }, value: '41', stock: 6 },
-      { id: 'v4', name: { en: 'Size', am: 'መጠን' }, value: '42', stock: 12 }
+      { id: 'velour-noir-perfume-50ml', name: { en: 'Volume', am: 'መጠን' }, value: '50ml', stock: 8 },
+      { id: 'velour-noir-perfume-100ml', name: { en: 'Volume', am: 'መጠን' }, value: '100ml', stock: 10 }
     ],
-    tags: ['featured', 'lifestyle']
+    tags: ['featured', 'luxury', 'fragrance'],
+    brand: 'Velour Noir',
+    vendor: 'JMart Store',
+    availableSizes: ['50ml', '100ml']
   },
   {
-    id: '3',
-    slug: 'nala-fragrance',
-    title: { en: 'Nala Fragrance', am: 'ናላ ሽቶ' },
+    id: 'luna-leather-handbag',
+    slug: 'luna-leather-handbag',
+    title: { en: 'Luna Leather Handbag', am: 'ሉና የቆዳ የእጅ ቦርሳ' },
     description: {
-      en: 'Warm, modern, and softly expressive for premium gifting.',
-      am: 'ለስጦታ የሚመች ሞቃት፣ ዘመናዊ እና የማይጮህ ሽቶ.'
+      en: 'A structured leather handbag with a refined silhouette for workdays and weekends.',
+      am: 'ለስራ ቀናትና ለሳምንት መጨረሻ የሚመች የተስተካከለ የቆዳ የእጅ ቦርሳ።'
     },
-    price: { amount: 2950, currency: 'ETB' },
-    compareAtPrice: { amount: 3400, currency: 'ETB' },
-    rating: 4.9,
-    reviewCount: 214,
-    stock: 42,
+    price: { amount: 5950, currency: 'ETB' },
+    compareAtPrice: { amount: 6800, currency: 'ETB' },
+    rating: 4.8,
+    reviewCount: 73,
+    stock: 22,
     images: [
-      { id: '3a', url: 'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=1200&q=80', alt: { en: 'Nala Fragrance bottle', am: 'የሽቶው ጠርሙስ' } },
-      { id: '3b', url: 'https://images.unsplash.com/photo-1557170334-a9632e77c6e4?auto=format&fit=crop&w=1200&q=80', alt: { en: 'Nala Fragrance packaging', am: 'የሽቶው ማሸጊያ' } }
+      {
+        id: 'luna-leather-handbag-front',
+        url: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=1200&q=80',
+        alt: { en: 'Luna leather handbag', am: 'የሉና የቆዳ የእጅ ቦርሳ' }
+      },
+      {
+        id: 'luna-leather-handbag-side',
+        url: 'https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?auto=format&fit=crop&w=1200&q=80',
+        alt: { en: 'Luna handbag side view', am: 'የሉና ቦርሳ የጎን እይታ' }
+      }
     ],
     variants: [
-      { id: 'v5', name: { en: 'Volume', am: 'መጠን' }, value: '50ml', stock: 20 },
-      { id: 'v6', name: { en: 'Volume', am: 'መጠን' }, value: '100ml', stock: 22 }
+      { id: 'luna-leather-handbag-black', name: { en: 'Color', am: 'ቀለም' }, value: 'Black', stock: 12 },
+      { id: 'luna-leather-handbag-tan', name: { en: 'Color', am: 'ቀለም' }, value: 'Tan', stock: 10 }
     ],
-    tags: ['new-arrival', 'lifestyle']
+    tags: ['featured', 'new-arrival', 'bags'],
+    brand: 'Luna Atelier',
+    vendor: 'JMart Store',
+    availableColors: ['Black', 'Tan']
   }
 ];

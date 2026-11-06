@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { mockCatalog } from '../data/mockCatalog';
+import type { ProductSummary } from '@jmart/shared';
 
 const categoryCards = [
   {
@@ -64,7 +64,7 @@ export function CategoryStrip() {
   );
 }
 
-export function BestSellersStory() {
+export function BestSellersStory({ products }: { products: ProductSummary[] }) {
   return (
     <section className="grid gap-6 rounded-[2rem] border border-border bg-surface/70 p-6 shadow-premium backdrop-blur-xl lg:grid-cols-[0.95fr_1.05fr] lg:p-8">
       <div>
@@ -75,7 +75,7 @@ export function BestSellersStory() {
         </p>
 
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          <StoryStat label="Products" value={`${mockCatalog.length}+`} />
+          <StoryStat label="Products" value={`${products.length}`} />
           <StoryStat label="Support" value="Local delivery" />
           <StoryStat label="Payments" value="Chapa checkout" />
           <StoryStat label="Experience" value="Light & dark" />
@@ -84,7 +84,7 @@ export function BestSellersStory() {
 
       <div className="grid gap-3 rounded-[1.5rem] border border-border bg-surfaceAlt p-4">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">Popular now</p>
-        {mockCatalog.slice(0, 3).map((product) => (
+        {products.slice(0, 3).map((product) => (
           <div key={product.id} className="flex items-center gap-4 rounded-2xl border border-border bg-surface p-3">
             <img src={product.images[0]?.url} alt={product.images[0]?.alt.en} className="h-16 w-16 rounded-xl object-cover" />
             <div className="flex-1">

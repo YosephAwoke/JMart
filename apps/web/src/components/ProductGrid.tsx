@@ -1,9 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import type { ProductSummary } from '@jmart/shared';
-import { mockCatalog } from '../data/mockCatalog';
 import { ProductCard } from './ProductCard';
 
-export function ProductGrid({ products = mockCatalog }: { products?: ProductSummary[] }) {
+export function ProductGrid({ products }: { products: ProductSummary[] }) {
   return (
     <section id="shop" className="space-y-6">
       <div className="flex items-end justify-between gap-4">

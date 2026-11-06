@@ -1,7 +1,9 @@
-import { createServer } from './app.js';
+import 'dotenv/config';
 import { connectDatabase } from './config/db.js';
+import mongoose from 'mongoose';
+import { createServer } from './app.js';
 
-const port = Number(process.env.PORT ?? 4000);
+const port = process.env.PORT;
 
 async function bootstrap() {
   await connectDatabase();
@@ -14,5 +16,4 @@ async function bootstrap() {
 
 bootstrap().catch((error) => {
   console.error('Failed to start API', error);
-  process.exit(1);
-});
+  process.exit(1);});

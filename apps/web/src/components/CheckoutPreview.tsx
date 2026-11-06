@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
-import { mockCatalog } from '../data/mockCatalog';
+import type { ProductSummary } from '@jmart/shared';
 import { AddisCheckoutForm } from './forms/AddisCheckoutForm';
 
-export function CheckoutPreview() {
-  const showcaseImage = mockCatalog[0]?.images[0]?.url ?? 'https://images.unsplash.com/photo-1556742400-b5fdd3e8e4d2?auto=format&fit=crop&w=1200&q=80';
+export function CheckoutPreview({ products }: { products: ProductSummary[] }) {
+  const showcaseImage = products[0]?.images[0]?.url ?? 'https://images.unsplash.com/photo-1556742400-b5fdd3e8e4d2?auto=format&fit=crop&w=1200&q=80';
 
   return (
     <section id="checkout" className="grid gap-6 lg:grid-cols-[1fr_0.95fr]">

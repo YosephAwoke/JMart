@@ -1,11 +1,11 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
-import { mockCatalog } from '../data/mockCatalog';
+import type { ProductSummary } from '@jmart/shared';
 import { useLocale } from '../providers/LocaleProvider';
 
-export function HeroSection() {
+export function HeroSection({ products }: { products: ProductSummary[] }) {
   const { t } = useLocale();
-  const slides = useMemo(() => mockCatalog.slice(0, 3), []);
+  const slides = useMemo(() => products.slice(0, 3), [products]);
   const [activeSlide, setActiveSlide] = useState(0);
 
   useEffect(() => {

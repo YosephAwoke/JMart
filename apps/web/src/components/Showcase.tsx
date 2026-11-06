@@ -1,10 +1,9 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useProducts } from '../hooks/useProducts';
+import type { ProductSummary } from '@jmart/shared';
 import { useLocale } from '../providers/LocaleProvider';
 
-export function Showcase() {
-  const { products } = useProducts('', 'all');
+export function Showcase({ products }: { products: ProductSummary[] }) {
   const featured = products.slice(0, 3);
   const { language } = useLocale();
 

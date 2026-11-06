@@ -17,6 +17,8 @@ const productSchema = new Schema(
     price: { amount: { type: Number, required: true }, currency: { type: String, default: 'ETB' } },
     compareAtPrice: { amount: Number, currency: String },
     stock: { type: Number, default: 0 },
+    rating: { type: Number, default: 0, min: 0, max: 5 },
+    reviewCount: { type: Number, default: 0, min: 0 },
     images: [
       {
         url: { type: String, required: true },

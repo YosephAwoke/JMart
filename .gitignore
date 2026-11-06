@@ -6,3 +6,5 @@ build
 .env.*
 coverage
 *.log
+apps/api/.env
+apps/web/.env

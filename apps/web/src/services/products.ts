@@ -6,8 +6,28 @@ const PRODUCT_CACHE_KEY = 'jmart-products-cache-v1';
 const PRODUCT_CACHE_TTL_MS = 1000 * 60 * 60 * 6;
 
 interface ApiProductResponse {
-  data: Array<Partial<ProductSummary> & { _id?: string; createdAt?: string; updatedAt?: string }>;
+  data: Array<ApiProduct>;
 }
+
+type ApiProduct = Omit<Partial<ProductSummary>, 'images' | 'variants'> & {
+  _id?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  images?: Array<{
+    id?: string;
+    _id?: string;
+    url: string;
+    alt: ProductSummary['images'][number]['alt'];
+  }>;
+  variants?: Array<{
+    id?: string;
+    _id?: string;
+    name: ProductSummary['variants'][number]['name'];
+    value: string;
+    sku?: string;
+    stock: number;
+  }>;
+};
 
 type CachedProducts = {
   savedAt: number;
@@ -39,23 +59,23 @@ export function writeCachedProducts(products: ProductSummary[]) {
   }
 }
 
-export async function fetchProducts(): Promise<ProductSummary[]> {
+export async function fetchProducts(useFallback = true): Promise<ProductSummary[]> {
   try {
     const response = await fetch('/api/products');
     if (!response.ok) {
-      return readCachedProducts();
+      return useFallback ? readCachedProducts() : [];
     }
 
     const payload = (await response.json()) as ApiProductResponse;
     const products = payload.data.map(normalizeProduct).filter(Boolean) as ProductSummary[];
     if (products.length > 0) writeCachedProducts(products);
-    return products.length > 0 ? products : readCachedProducts();
+    return products.length > 0 ? products : useFallback ? readCachedProducts() : [];
   } catch {
-    return readCachedProducts();
+    return useFallback ? readCachedProducts() : [];
   }
 }
 
-export function normalizeProduct(product: Partial<ProductSummary> & { _id?: string }): ProductSummary | null {
+export function normalizeProduct(product: ApiProduct): ProductSummary | null {
   if (!product.slug || !product.title || !product.description || !product.price || !product.images || !product.variants) {
     return null;
   }
@@ -70,8 +90,14 @@ export function normalizeProduct(product: Partial<ProductSummary> & { _id?: stri
     rating: product.rating ?? 0,
     reviewCount: product.reviewCount ?? 0,
     stock: product.stock ?? 0,
-    images: product.images,
-    variants: product.variants,
+    images: product.images.map((image, index) => ({
+      ...image,
+      id: image.id ?? image._id ?? `${product.slug}-image-${index + 1}`
+    })),
+    variants: product.variants.map((variant, index) => ({
+      ...variant,
+      id: variant.id ?? variant._id ?? `${product.slug}-variant-${index + 1}`
+    })),
     tags: product.tags ?? []
   };
 }
@@ -136,7 +162,7 @@ export async function fetchProductBySlug(slug: string): Promise<ProductSummary |
   try {
     const response = await fetch(`/api/products/${encodeURIComponent(slug)}`);
     if (!response.ok) return null;
-    const payload = (await response.json()) as { data: Partial<ProductSummary> & { _id?: string } };
+    const payload = (await response.json()) as { data: ApiProduct };
     return normalizeProduct(payload.data) ?? null;
   } catch {
     return null;

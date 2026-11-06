@@ -2,10 +2,9 @@ import { motion } from 'framer-motion';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import type { ProductComment, ProductSummary } from '@jmart/shared';
-import { mockCatalog } from '../data/mockCatalog';
 import { useCart } from '../providers/CartProvider';
 import { useAuth } from '../providers/AuthProvider';
-import { fetchProductBySlug } from '../services/products';
+import { fetchProductBySlug, fetchProducts } from '../services/products';
 import { inputFieldClass } from '../components/forms/inputStyles';
 
 type ProductDetail = ProductSummary;
@@ -42,8 +41,8 @@ export function ProductPage() {
   const { user, token } = useAuth();
   const { addItem } = useCart();
   const navigate = useNavigate();
-  const initialProduct = useMemo(() => (slug ? mockCatalog.find((item) => item.slug === slug) ?? null : null), [slug]);
-  const [product, setProduct] = useState<ProductDetail | null>(initialProduct);
+  const [product, setProduct] = useState<ProductDetail | null>(null);
+  const [apiProducts, setApiProducts] = useState<ProductSummary[]>([]);
   const [comments, setComments] = useState<ProductComment[]>([]);
   const [loading, setLoading] = useState(false);
   const [commentText, setCommentText] = useState('');
@@ -60,20 +59,18 @@ export function ProductPage() {
 
     window.scrollTo(0, 0);
 
-    const localProduct = mockCatalog.find((item) => item.slug === slug) ?? null;
-    setProduct(localProduct ?? initialProduct);
+    setProduct(null);
+    setApiProducts([]);
     setComments([]);
     setCommentText('');
     setCommentBusy(false);
     setZoomLevel(1);
     setQuantity(1);
-    setActiveImageId((localProduct ?? initialProduct)?.images[0]?.id ?? '');
+    setActiveImageId('');
 
-    const meta = localProduct ? detailMeta[localProduct.slug] : undefined;
-    const fallbackProduct = localProduct ?? initialProduct;
-    setSelectedSize(meta?.availableSizes[0] ?? fallbackProduct?.variants[0]?.value ?? '');
-    setSelectedColor(meta?.availableColors[0] ?? '');
-  }, [slug, initialProduct]);
+    setSelectedSize('');
+    setSelectedColor('');
+  }, [slug]);
 
   useEffect(() => {
     let mounted = true;
@@ -88,9 +85,10 @@ export function ProductPage() {
         })
         .catch(() => undefined);
 
-      const detail = await fetchProductBySlug(slug);
+      const [detail, products] = await Promise.all([fetchProductBySlug(slug), fetchProducts()]);
       if (!mounted) return;
-      const resolved = detail ?? mockCatalog.find((item) => item.slug === slug) ?? initialProduct ?? null;
+      setApiProducts(products);
+      const resolved = detail ?? products.find((item) => item.slug === slug) ?? null;
       setProduct(resolved);
       setActiveImageId(resolved?.images[0]?.id ?? '');
       const meta = resolved ? detailMeta[resolved.slug] : undefined;
@@ -101,13 +99,13 @@ export function ProductPage() {
     return () => {
       mounted = false;
     };
-  }, [slug, initialProduct]);
+  }, [slug]);
 
   const detail = product ? detailMeta[product.slug] ?? detailMeta['aurora-bag'] : null;
   const activeImage = useMemo(() => product?.images.find((image) => image.id === activeImageId) ?? product?.images[0], [product, activeImageId]);
   const relatedProducts = useMemo(
-    () => mockCatalog.filter((item) => item.slug !== (product?.slug ?? slug ?? '')).slice(0, 3),
-    [product?.slug, slug]
+    () => apiProducts.filter((item) => item.slug !== (product?.slug ?? slug ?? '')).slice(0, 3),
+    [apiProducts, product?.slug, slug]
   );
   const productViews = Math.max(product?.orderCount ?? detail?.orderCount ?? 0, Math.round((product?.reviewCount ?? 0) * 7.5));
 

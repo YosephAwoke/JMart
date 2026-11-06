@@ -7,6 +7,126 @@ import { addInMemoryComment, listInMemoryComments } from '../lib/inMemoryProduct
 
 const JWT_SECRET = process.env.JWT_SECRET ?? 'dev-secret';
 
+type LocalizedTextInput = {
+  en?: string;
+  am?: string;
+};
+
+type ProductRequestBody = {
+  slug?: string;
+  title?: LocalizedTextInput;
+  description?: LocalizedTextInput;
+  category?: string;
+  price?: {
+    amount?: number;
+    currency?: string;
+  };
+  compareAtPrice?: {
+    amount?: number;
+    currency?: string;
+  };
+  rating?: number;
+  reviewCount?: number;
+  stock?: number;
+  images?: unknown[];
+  variants?: unknown[];
+  tags?: string[];
+  brand?: string;
+  vendor?: string;
+  companyDescription?: LocalizedTextInput;
+  availableSizes?: string[];
+  availableColors?: string[];
+  orderCount?: number;
+  isActive?: boolean;
+};
+
+function hasLocalizedText(value: LocalizedTextInput | undefined) {
+  return Boolean(value?.en?.trim() && value.am?.trim());
+}
+
+export async function createProduct(req: Request, res: Response) {
+  const payload = req.body as ProductRequestBody | null | undefined;
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+    return res.status(400).json({
+      message: 'Required product fields are missing or invalid'
+    });
+  }
+
+  const {
+    slug,
+    title,
+    description,
+    category,
+    price,
+    compareAtPrice,
+    rating,
+    reviewCount,
+    stock,
+    images,
+    variants,
+    tags,
+    brand,
+    vendor,
+    companyDescription,
+    availableSizes,
+    availableColors,
+    orderCount,
+    isActive
+  } = payload;
+
+  if (
+    !slug?.trim() ||
+    !hasLocalizedText(title) ||
+    !hasLocalizedText(description) ||
+    !category?.trim() ||
+    typeof price?.amount !== 'number' ||
+    !Number.isFinite(price.amount) ||
+    (rating !== undefined && (!Number.isFinite(rating) || rating < 0 || rating > 5)) ||
+    (reviewCount !== undefined && (!Number.isInteger(reviewCount) || reviewCount < 0))
+  ) {
+    return res.status(400).json({
+      message: 'Required product fields are missing or invalid'
+    });
+  }
+
+  try {
+    const product = new ProductModel({
+      slug: slug.trim(),
+      title,
+      description,
+      category: category.trim(),
+      price,
+      compareAtPrice,
+      rating,
+      reviewCount,
+      stock,
+      images,
+      variants,
+      tags,
+      brand,
+      vendor,
+      companyDescription,
+      availableSizes,
+      availableColors,
+      orderCount,
+      isActive
+    });
+
+    await product.save();
+    return res.status(201).json({ data: product });
+  } catch (error) {
+    if (error instanceof mongoose.Error.ValidationError) {
+      return res.status(400).json({ message: 'Invalid product data' });
+    }
+
+    if (error instanceof mongoose.mongo.MongoServerError && error.code === 11000) {
+      return res.status(409).json({ message: 'A product with this slug already exists' });
+    }
+
+    return res.status(500).json({ message: 'Could not create product' });
+  }
+}
+
 export async function listProducts(_: Request, res: Response) {
   try {
     const products = await ProductModel.find({ isActive: true }).sort({ createdAt: -1 }).lean();
