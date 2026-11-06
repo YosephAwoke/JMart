@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title>JMart</title>
+  <rect width="64" height="64" rx="16" fill="#0f172a"/>
+  <path d="M19 18h26v23c0 8-5.8 13-13 13S19 49 19 41V18Z" fill="#10b981"/>
+  <path d="M25 25v15c0 4.2 2.5 7 7 7 3.9 0 6-2.5 6-6.5V25" fill="none" stroke="#f8fafc" stroke-linecap="round" stroke-width="4"/>
+  <path d="M25 20c0-5.2 2.8-8 7-8s7 2.8 7 8" fill="none" stroke="#f5c542" stroke-linecap="round" stroke-width="4"/>
+  <path d="m32 28 1.4 2.8 3.1.4-2.3 2.2.6 3.1-2.8-1.5-2.8 1.5.5-3.1-2.2-2.2 3.1-.4L32 28Z" fill="#f5c542"/>
+</svg>
